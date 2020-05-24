@@ -1,69 +1,30 @@
 package pl.hotelbooking.Hotel.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import java.util.Collection;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
+//@Builder
 // jak się będzie miało powiązanie między room, a user?
-public class User /*implements UserDetails*/ {
+public class User extends BaseModel {
 
-    @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long id;
     private String name;
     private String surname;
+    private String login;
+    private String password;
+    private String email;
+    private String phone;
+
     private int age;
 
-    @ManyToOne (fetch = FetchType.EAGER)
-    //@JoinColumn(name = "room_id")
-    private Room room;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
-
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return null;
-//    }
-//
-//    @Override
-//    public String getPassword() {
-//        return null;
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return null;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return false;
-//    }
 }

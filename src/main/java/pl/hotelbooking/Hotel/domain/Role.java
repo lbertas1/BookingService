@@ -1,4 +1,10 @@
 package pl.hotelbooking.Hotel.domain;
 
-public class Role {
+import javax.persistence.Entity;
+
+@Entity
+public class Role extends BaseModel {
+
+    private String name;
+
 }

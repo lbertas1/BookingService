@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Data
@@ -13,22 +16,15 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Room {
+public class Room extends BaseModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
     private Integer roomNumber;
     private Integer roomCapacity;
-    private Boolean isBusy = false;
+    private String describe;
+    private BigDecimal priceForNight;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "room")
-    private Set<User> guestSet;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "room")
-    private Set<Reservation> reservation;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "room")
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<BookingStatus> bookingStatuses;
 
 }
