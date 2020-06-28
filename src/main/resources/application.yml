@@ -1,0 +1,24 @@
+spring:
+  profiles: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+      path: '/console'
+  datasource:
+    platform: h2
+    driver-class-name: org.h2.Driver
+    url: 'jdbc:h2:file:/home/lbertas1/Dokumenty/JavaProject/Hotel/dataBase'
+
+#---
+#spring:
+#  profiles: prod
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#  datasource:
+#    url: 'jdbc:Mysql://localhost:3306/PhysicalActivityLog?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false'
+#    username: 'root'
+#    password: 'your_new_password'

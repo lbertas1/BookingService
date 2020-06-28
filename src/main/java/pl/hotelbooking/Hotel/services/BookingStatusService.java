@@ -1,7 +1,8 @@
 package pl.hotelbooking.Hotel.services;
 
 import org.springframework.stereotype.Service;
-import pl.hotelbooking.Hotel.domain.models.BookingStatusModel;
+import org.springframework.transaction.annotation.Transactional;
+import pl.hotelbooking.Hotel.domain.dto.BookingStatusDTO;
 import pl.hotelbooking.Hotel.repository.BookingStatusRepository;
 
 import java.math.BigDecimal;
@@ -16,19 +17,9 @@ public class BookingStatusService {
         this.bookingStatusRepository = bookingStatusRepository;
     }
 
-    public BigDecimal calculatePriceForReservation(Long id) {
-        BookingStatusModel tmpBookingStatusModel = bookingStatusRepository.getOne(id).toBookingStatusModel();
-        // sprawdzic, czy dobrze policzy, nie pamietam kolejnosci. albo math.abs
-        Long days = ChronoUnit.DAYS.between(tmpBookingStatusModel.getReservation().getEndOfBooking(), tmpBookingStatusModel.getReservation().getStartOfBooking());
-        BigDecimal quantityOfDays = new BigDecimal(String.valueOf(days));
-        BigDecimal priceForNight = new BigDecimal(String.valueOf(tmpBookingStatusModel.getRoom().getPriceForNight()));
-        BigDecimal totalAmount = quantityOfDays.multiply(priceForNight);
-        tmpBookingStatusModel.setTotalAmountForReservation(totalAmount);
-        return totalAmount;
-    }
-
+    @Transactional
     public void changePaymentStatus(Long id, boolean paymentStatus) {
-        // sprawdzenie uprawnien
+        // sprawdzenie uprawnien, sprawdzić czy to wystarczy, czy trzeba jeszcze zapisać
         bookingStatusRepository.getOne(id).setReservationPaid(paymentStatus);
     }
 

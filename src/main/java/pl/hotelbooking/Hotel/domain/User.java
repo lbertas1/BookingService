@@ -3,7 +3,8 @@ package pl.hotelbooking.Hotel.domain;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.hotelbooking.Hotel.domain.models.UserModel;
+import lombok.experimental.SuperBuilder;
+import pl.hotelbooking.Hotel.domain.dto.UserDTO;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -12,8 +13,7 @@ import javax.persistence.ManyToOne;
 @Data
 @Entity
 @NoArgsConstructor
-@Builder
-// jak się będzie miało powiązanie między room, a user?
+@SuperBuilder(toBuilder = true)
 public class User extends BaseModel {
 
     private String name;
@@ -32,8 +32,8 @@ public class User extends BaseModel {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    public UserModel toUserModel() {
-        return new UserModel(
+    public UserDTO toUserDto() {
+        return new UserDTO(
                 getName(),
                 getSurname(),
                 getAge(),
