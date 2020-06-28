@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RoomDTO extends BaseModel {
 
+    private Long id;
     private Integer roomNumber;
     private Integer roomCapacity;
     private String describe;

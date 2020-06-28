@@ -21,4 +21,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Set<Reservation> findAllByEndOfBookingIsAfter(LocalDate today);
 
     Set<Reservation> removeAllByEndOfBookingAfter(LocalDate today);
+
+    /*
+    * //    to jest hql
+    @Query(value = "select reservation from Reservation reservation "
+            + "left join fetch reservation.room "
+            + "where reservation.startOfBooking =:startOfBooking "
+            + "and reservation.endOfBooking =:endOfBooking")
+    Set<Reservation> findAllByStartOfBookingBeforeAndEndOfBookingIsAfter(LocalDate startOfBooking, LocalDate endOfBooking);*/
 }

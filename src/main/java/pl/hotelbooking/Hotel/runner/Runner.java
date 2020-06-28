@@ -3,10 +3,9 @@ package pl.hotelbooking.Hotel.runner;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import pl.hotelbooking.Hotel.domain.BookingStatus;
-import pl.hotelbooking.Hotel.domain.Reservation;
 import pl.hotelbooking.Hotel.domain.Room;
 import pl.hotelbooking.Hotel.domain.User;
+import pl.hotelbooking.Hotel.repository.RoomRepository;
 import pl.hotelbooking.Hotel.services.BookingStatusService;
 import pl.hotelbooking.Hotel.services.ReservationService;
 import pl.hotelbooking.Hotel.services.RoomService;
@@ -30,12 +29,14 @@ public class Runner implements CommandLineRunner {
     private final ReservationService reservationService;
     private final RoomService roomService;
     private final UserService userService;
+    private final RoomRepository roomRepository;
 
-    public Runner(BookingStatusService bookingStatusService, ReservationService reservationService, RoomService roomService, UserService userService) {
+    public Runner(BookingStatusService bookingStatusService, ReservationService reservationService, RoomService roomService, UserService userService, RoomRepository roomRepository) {
         this.bookingStatusService = bookingStatusService;
         this.reservationService = reservationService;
         this.roomService = roomService;
         this.userService = userService;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -51,7 +52,6 @@ public class Runner implements CommandLineRunner {
         // potworzyć te nowe obiekty i sprawdzić czy działa
 
         Room room1 = Room.builder()
-                .id(1L)
                 .roomNumber(1)
                 .roomCapacity(2)
                 .priceForNight(new BigDecimal("200"))
@@ -59,7 +59,6 @@ public class Runner implements CommandLineRunner {
                 .build();
 
         Room room2 = Room.builder()
-                .id(2L)
                 .roomNumber(2)
                 .roomCapacity(2)
                 .priceForNight(new BigDecimal("200"))
@@ -67,7 +66,6 @@ public class Runner implements CommandLineRunner {
                 .build();
 
         Room room3 = Room.builder()
-                .id(3L)
                 .roomNumber(3)
                 .roomCapacity(2)
                 .priceForNight(new BigDecimal("200"))
@@ -75,7 +73,6 @@ public class Runner implements CommandLineRunner {
                 .build();
 
         Room room4 = Room.builder()
-                .id(4L)
                 .roomNumber(4)
                 .roomCapacity(2)
                 .priceForNight(new BigDecimal("200"))
@@ -93,7 +90,7 @@ public class Runner implements CommandLineRunner {
 
         System.out.println("reservationService.getAllReservations() = " + reservationService.getAllReservations());
 
-        reservationService.addReservation(room1.getId(), LocalDate.now(), LocalDate.now().plusDays(5), user.toUserDto());
+        reservationService.addReservation(roomRepository.getOne(1L).getId(), LocalDate.now(), LocalDate.now().plusDays(5), user.toUserDto());
 
         System.out.println("reservationService.getAllReservations() = " + reservationService.getAllReservations());
 

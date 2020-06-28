@@ -1,7 +1,6 @@
 package pl.hotelbooking.Hotel.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -35,6 +34,7 @@ public class Room extends BaseModel {
     // w sumie to builder też pod spodem chyba leci na setterach
     public RoomDTO toRoomDto() {
         return new RoomDTO(
+                getId(),
                 getRoomNumber(),
                 getRoomCapacity(),
                 getDescribe(),

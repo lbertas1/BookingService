@@ -68,7 +68,7 @@ public class ReservationService {
     @Transactional
     public void addReservation(Long roomId, LocalDate from, LocalDate to, UserDTO userDTO) {
         List<RoomDTO> roomSought = roomService.getAllRooms().stream()
-                .filter(roomDTO -> roomService.isRoomAvailableInGivenPeriod(roomDTO.getId(), from, to))
+                .filter(roomDTO -> roomService.isRoomAvailableInGivenPeriod(roomId, from, to))
                 .collect(Collectors.toList())
                 .stream()
                 .takeWhile(roomDTO -> roomDTO.getId().equals(roomId))
@@ -85,7 +85,7 @@ public class ReservationService {
                         .totalAmountForReservation(calculatePriceForReservation(from, to, roomDTO.getPriceForNight())).build())
                 .build();
 
-        reservationRepository.save(reservation);
+        reservationRepository.saveAndFlush(reservation);
     }
 
     public Set<ReservationDTO> getAllReservations() {
