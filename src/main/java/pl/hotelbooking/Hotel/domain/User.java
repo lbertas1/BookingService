@@ -1,11 +1,10 @@
 package pl.hotelbooking.Hotel.domain;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import pl.hotelbooking.Hotel.domain.dto.UserDTO;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,24 +27,7 @@ public class User extends BaseModel {
     private String zipCode;
     private String country;
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
-
-    public UserDTO toUserDto() {
-        return new UserDTO(
-                getName(),
-                getSurname(),
-                getAge(),
-                getLogin(),
-                getPassword(),
-                getEmail(),
-                getPhone(),
-                getAddress(),
-                getCity(),
-                getZipCode(),
-                getCountry(),
-                getRole()
-        );
-    }
 }

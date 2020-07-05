@@ -9,4 +9,6 @@ import pl.hotelbooking.Hotel.domain.BookingStatus;
 public interface BookingStatusRepository extends JpaRepository<BookingStatus, Long> {
 
 
+
+
 }

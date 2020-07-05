@@ -1,14 +1,12 @@
 package pl.hotelbooking.Hotel.services;
 
-import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.hotelbooking.Hotel.domain.BaseModel;
-import pl.hotelbooking.Hotel.domain.BookingStatus;
 import pl.hotelbooking.Hotel.domain.Reservation;
 import pl.hotelbooking.Hotel.domain.Room;
+import pl.hotelbooking.Hotel.domain.dto.ReservationDTO;
 import pl.hotelbooking.Hotel.domain.dto.RoomDTO;
-import pl.hotelbooking.Hotel.domain.dto.UserDTO;
 import pl.hotelbooking.Hotel.repository.ReservationRepository;
 import pl.hotelbooking.Hotel.repository.RoomRepository;
 
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class RoomService {
 
-    // WSZYSTKO DO SPRAWDZENIA!!! CZY BĘDZIE DOBRZE DZIAŁAĆ
+    // SPRAWDZONE
 
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRepository;
@@ -46,21 +44,26 @@ public class RoomService {
 
     public List<RoomDTO> getAllRooms() {
         return roomRepository.findAll().stream()
-                .map(Room::toRoomDto)
+                .map(RoomDTO::toRoomDTO)
                 .collect(Collectors.toList());
+    }
+
+    public RoomDTO getRoomById(Long id) {
+        Room room = roomRepository.findById(id).orElseThrow();
+        return RoomDTO.toRoomDTO(room);
     }
 
     public List<RoomDTO> getAllBusyRooms() {
         return reservationRepository.findAllByStartOfBookingBeforeAndEndOfBookingIsAfter(LocalDate.now(), LocalDate.now()).stream()
                 .map(Reservation::getRoom)
-                .map(Room::toRoomDto)
+                .map(RoomDTO::toRoomDTO)
                 .collect(Collectors.toList());
     }
 
     // w przyszlosci ogarnac czy przez booking status np sie nie da zrobic tego krocej
     public List<RoomDTO> getAllEmptyRooms() {
         List<RoomDTO> allRooms = roomRepository.findAll().stream()
-                .map(Room::toRoomDto)
+                .map(RoomDTO::toRoomDTO)
                 .collect(Collectors.toList());
 
         List<RoomDTO> allBusyRooms = getAllBusyRooms();
@@ -70,35 +73,45 @@ public class RoomService {
                 .collect(Collectors.toList());
     }
 
-    // przetestowac
-    public boolean isRoomAvailableInGivenPeriod(Long roomId, LocalDate from, LocalDate to) {
-        Room room = roomRepository.findById(roomId).orElseThrow();
-        Set<Reservation> reservations = reservationRepository.findByRoom(room);
-        List<Reservation> reservationsInGivenPeriod = reservations.stream()
-                .filter(reservation -> reservation.getStartOfBooking().isBefore(from) || reservation.getEndOfBooking().isAfter(from) ||
-                        reservation.getStartOfBooking().isBefore(to) || reservation.getEndOfBooking().isAfter(to))
+    // działa, ale zmienić formę ściągania danych z bazy, żeby nie ściągać wszystkich rezerwacji bo to mało wydajne
+    public boolean isRoomAvailableInGivenPeriod(Long id, LocalDate from, LocalDate to) {
+        // to nie działa
+//        Room room = roomRepository.findById(id).orElseThrow();
+//        Set<Reservation> reservations = reservationRepository.findByRoom(room);
+//        List<Reservation> reservationsInGivenPeriod = reservations.stream()
+//                .filter(reservation -> reservation.getStartOfBooking().isBefore(from) || reservation.getEndOfBooking().isAfter(from) ||
+//                        reservation.getStartOfBooking().isBefore(to) || reservation.getEndOfBooking().isAfter(to))
+//                .collect(Collectors.toList());
+
+        List<ReservationDTO> reservationsInGivenPeriod = reservationRepository.findAll()
+                .stream()
+                .map(ReservationDTO::toReservationDTO)
+                .filter(reservationDTO -> (reservationDTO.getStartOfBooking().isBefore(from) && reservationDTO.getEndOfBooking().isAfter(from)) ||
+                        (reservationDTO.getStartOfBooking().isBefore(to) && reservationDTO.getEndOfBooking().isAfter(to)) ||
+                        (reservationDTO.getStartOfBooking().isAfter(from) && reservationDTO.getEndOfBooking().isBefore(to)))
                 .collect(Collectors.toList());
 
         return reservationsInGivenPeriod.isEmpty();
     }
 
-    // przetestować
-    public Set<RoomDTO> getAllEmptyRoomsInGivenPeriod(LocalDate from, LocalDate to) {
+    // działa
+    public List<RoomDTO> getAllEmptyRoomsInGivenPeriod(LocalDate from, LocalDate to) {
         List<Reservation> allReservations = reservationRepository.findAll();
         Set<Long> roomsId = allReservations.stream()
-                .filter(reservation -> reservation.getStartOfBooking().isBefore(from) || reservation.getEndOfBooking().isAfter(from) ||
-                        reservation.getStartOfBooking().isBefore(to) || reservation.getEndOfBooking().isAfter(to))
+                .filter(reservationDTO -> (reservationDTO.getStartOfBooking().isBefore(from) && reservationDTO.getEndOfBooking().isAfter(from)) ||
+                        (reservationDTO.getStartOfBooking().isBefore(to) && reservationDTO.getEndOfBooking().isAfter(to)) ||
+                        (reservationDTO.getStartOfBooking().isAfter(from) && reservationDTO.getEndOfBooking().isBefore(to)))
                 .map(Reservation::getRoom)
                 .map(BaseModel::getId)
                 .collect(Collectors.toSet());
 
          return getAllRooms().stream()
                 .filter(roomDTO -> !roomsId.contains(roomDTO.getId()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
-    public Set<RoomDTO> getAllRoomsForGivenCapacity(int capacity) {
-        return roomRepository.findAllByRoomCapacity(capacity).stream().map(Room::toRoomDto).collect(Collectors.toSet());
+    public List<RoomDTO> getAllRoomsForGivenCapacity(int capacity) {
+        return roomRepository.findAllByRoomCapacity(capacity).stream().map(RoomDTO::toRoomDTO).collect(Collectors.toList());
     }
 
 }

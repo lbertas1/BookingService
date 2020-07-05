@@ -3,7 +3,6 @@ package pl.hotelbooking.Hotel.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import pl.hotelbooking.Hotel.domain.Reservation;
-import pl.hotelbooking.Hotel.domain.Room;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -16,9 +15,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Set<Reservation> findAllByEndOfBookingEquals(LocalDate date);
 
-    Set<Reservation> findByRoom(Room room);
-
-    Set<Reservation> findAllByEndOfBookingIsAfter(LocalDate today);
+    Set<Reservation> findAllByStartOfBookingIsBeforeAndEndOfBookingIsAfter(LocalDate date, LocalDate localDate);
 
     Set<Reservation> removeAllByEndOfBookingAfter(LocalDate today);
 
