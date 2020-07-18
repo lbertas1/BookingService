@@ -9,16 +9,9 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class ReservationDTO {
+public class IdPeriodDTO {
 
     private Long id;
-    private LocalDate startOfBooking;
-    private LocalDate endOfBooking;
-
-    private UserDTO user;
-
-    private RoomDTO room;
-
-    private BookingStatusDTO bookingStatusDTO;
-
+    private LocalDate from;
+    private LocalDate to;
 }

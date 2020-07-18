@@ -1,73 +1,67 @@
 package pl.hotelbooking.Hotel.controllers;
 
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.hotelbooking.Hotel.domain.dto.BookingStatusDTO;
 import pl.hotelbooking.Hotel.domain.dto.ReservationDTO;
-import pl.hotelbooking.Hotel.domain.dto.RoomDTO;
-import pl.hotelbooking.Hotel.domain.dto.UserDTO;
-import pl.hotelbooking.Hotel.repository.RoomRepository;
-import pl.hotelbooking.Hotel.repository.UserRepository;
+import pl.hotelbooking.Hotel.exceptions.ReservationServiceException;
 import pl.hotelbooking.Hotel.services.ReservationService;
+import pl.hotelbooking.Hotel.services.RoomService;
+import pl.hotelbooking.Hotel.services.UserService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/reservation")
+@RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationService reservationService;
-    private final RoomRepository roomRepository;
-    private final UserRepository userRepository;
-
-    public ReservationController(ReservationService reservationService, RoomRepository roomRepository, UserRepository userRepository) {
-        this.reservationService = reservationService;
-        this.roomRepository = roomRepository;
-        this.userRepository = userRepository;
-    }
+    private final RoomService roomService;
+    private final UserService userService;
 
     @GetMapping
     ResponseEntity<Map<Boolean, List<ReservationDTO>>> searchForEndingReservations() {
         return ResponseEntity.ok(reservationService.searchForEndingsReservations());
     }
 
-    @GetMapping ("/unpaidReservations")
-    ResponseEntity<List<ReservationDTO>> searchForUnpaidReservations() {
-        return ResponseEntity.ok(reservationService.searchForUnpaidReservations());
+    @GetMapping("/unpaidReservationsBetween/{start}/{end}")
+    ResponseEntity<List<ReservationDTO>> searchForUnpaidReservations(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
+        return ResponseEntity.ok(reservationService.searchForUnpaidReservationsBetweenDates(start, end));
     }
 
-    // opakować wyjątkiem ze statusem
     // dodać pokazywanie pokoi do wyboru, żeby można było zaznaczyć pokój checkboxem i w ten sposób wybrać pokój do przesłania id
     // zrobić to na frontendzie, czy tutaj?
     @PostMapping("/createNewReservation")
-    @ResponseStatus(HttpStatus.CREATED)
-    void addReservation(@RequestBody ReservationDTO reservationDTO, Long roomId, Long userId) {
-        // sprawdzenie czy user istniejem własny wyjątek
-        UserDTO userDTO = UserDTO.toUserDto(userRepository.findById(userId).orElseThrow());
-        reservationDTO.setUser(userDTO);
-        // dodać własny wyjątek
-        RoomDTO roomDTO = RoomDTO.toRoomDTO(roomRepository.findById(roomId).orElseThrow());
-        reservationDTO.setRoom(roomDTO);
-
+    ResponseEntity<ReservationDTO> addReservation(@RequestBody ReservationDTO reservationDTO) throws ReservationServiceException {
         BigDecimal priceForReservation = reservationService.calculatePriceForReservation(reservationDTO.getStartOfBooking(),
-                reservationDTO.getEndOfBooking(), roomDTO.getPriceForNight());
+                reservationDTO.getEndOfBooking(), reservationDTO.getRoom().getPriceForNight());
 
         reservationDTO.setBookingStatusDTO(BookingStatusDTO.builder().reservationPaid(false)
-                .totalAmountForReservation(priceForReservation).room(roomDTO).build());
+                .totalAmountForReservation(priceForReservation).room(reservationDTO.getRoom()).build());
 
-        reservationService.saveNewReservation(reservationDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservationService.saveNewReservation(reservationDTO));
     }
 
-    @DeleteMapping ("/removeCompletedReservations")
-    void removeCompletedReservations() {
-        reservationService.removeCompletedReservation();
+    @GetMapping("/unpaidReservationToDate/{date}")
+    ResponseEntity<List<ReservationDTO>> getAllUnpaidReservationsTo(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationService.findAllUnpaidReservationToDate(date));
     }
 
-    @GetMapping ("/showAllReservations")
+    @DeleteMapping("/removeCompletedReservations")
+    ResponseEntity<Set<ReservationDTO>> removeCompletedReservations() {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationService.removeCompletedReservation());
+    }
+
+    @GetMapping("/showAllReservations")
     ResponseEntity<List<ReservationDTO>> showAllReservations() {
         return ResponseEntity.ok(reservationService.getAllReservations());
     }

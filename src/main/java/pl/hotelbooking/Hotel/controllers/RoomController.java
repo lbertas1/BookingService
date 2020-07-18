@@ -1,26 +1,22 @@
 package pl.hotelbooking.Hotel.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.hotelbooking.Hotel.domain.dto.IdPeriodDTO;
 import pl.hotelbooking.Hotel.domain.dto.RoomDTO;
+import pl.hotelbooking.Hotel.exceptions.RoomServiceException;
 import pl.hotelbooking.Hotel.services.RoomService;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/rooms")
+@RequiredArgsConstructor
 public class RoomController {
-    // nie wiem czy te mapowania na adres są ok
-    // co z nullami, ogarniać to w serwisie i wywalać tam błąd jeśli jest null????
-    // co z hateoas? dać tu coś jeszcze, jak np te linki właśnie, czy takie controllery są ok?
 
     private final RoomService roomService;
-
-    public RoomController(RoomService roomService) {
-        this.roomService = roomService;
-    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -29,25 +25,23 @@ public class RoomController {
     }
 
     @PostMapping("/addRoom")
-    @ResponseStatus(HttpStatus.CREATED)
-    void addRoom(@RequestBody RoomDTO room) {
-        roomService.addRoom(room);
+    ResponseEntity<RoomDTO> addRoom(@RequestBody RoomDTO room) throws RoomServiceException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(roomService.saveRoom(room));
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<RoomDTO> getRoomById(@PathVariable("id") Long id) {
+    ResponseEntity<RoomDTO> getRoomById(@PathVariable("id") Long id) throws RoomServiceException {
         return ResponseEntity.ok(roomService.getRoomById(id));
     }
 
     @PutMapping("/updateRoom")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    void updateRoom(@RequestBody RoomDTO roomDTO) {
-        roomService.updateRoom(roomDTO);
+    ResponseEntity<RoomDTO> updateRoom(@RequestBody RoomDTO roomDTO) throws RoomServiceException {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(roomService.updateRoom(roomDTO));
     }
 
     @DeleteMapping("/removeRoom/{id}")
-    void deleteRoom(@PathVariable Long id) {
-        roomService.removeRoom(id);
+    ResponseEntity<Long> deleteRoom(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(roomService.removeRoom(id));
     }
 
     @GetMapping("/busyRooms")
@@ -60,17 +54,14 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getAllEmptyRooms());
     }
 
-    // jak to zaadresować ? to jest ok?
-    // nie umiem tego przetestować w postmanie, nie wiem czy zły format daty daję, czy jak, błąd 500
-    @GetMapping("/isAvailable/{id}")
-    ResponseEntity<Boolean> isRoomAvailableInGivenPeriod(@PathVariable Long id, LocalDate from, LocalDate to) {
-        return ResponseEntity.ok(roomService.isRoomAvailableInGivenPeriod(id, from, to));
+    @GetMapping("/isAvailable")
+    ResponseEntity<Boolean> isRoomAvailableInGivenPeriod(@RequestBody IdPeriodDTO idPeriodDTO) {
+        return ResponseEntity.ok(roomService.isRoomAvailableInGivenPeriod(idPeriodDTO.getId(), idPeriodDTO.getFrom(), idPeriodDTO.getTo()));
     }
 
-    // nie umiem przetestować w postmanie
     @GetMapping("/emptyRoomsInPeriod")
-    ResponseEntity<List<RoomDTO>> getAllEmptyRoomsInGivenPeriod(LocalDate from, LocalDate to) {
-        return ResponseEntity.ok(roomService.getAllEmptyRoomsInGivenPeriod(from, to));
+    ResponseEntity<List<RoomDTO>> getAllEmptyRoomsInGivenPeriod(@RequestBody IdPeriodDTO idPeriodDTO) {
+        return ResponseEntity.ok(roomService.getAllEmptyRoomsInGivenPeriod(idPeriodDTO.getFrom(), idPeriodDTO.getTo()));
     }
 
     @GetMapping ("/capacity/{capacity}")

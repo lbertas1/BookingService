@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import pl.hotelbooking.Hotel.domain.BaseModel;
 import pl.hotelbooking.Hotel.domain.Role;
-import pl.hotelbooking.Hotel.domain.User;
 
 @Data
 @AllArgsConstructor
@@ -25,39 +24,4 @@ public class UserDTO extends BaseModel {
     private String country;
 
     private Role role;
-
-    public User toUser() {
-        return User.builder()
-                .name(name)
-                .surname(surname)
-                .age(age)
-                .login(login)
-                .password(password)
-                .email(email)
-                .phone(phone)
-                .address(address)
-                .city(city)
-                .zipCode(zipCode)
-                .country(country)
-                .role(role)
-                .build();
-    }
-
-    public static UserDTO toUserDto(User user) {
-        return UserDTO.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .surname(user.getSurname())
-                .age(user.getAge())
-                .login(user.getLogin())
-                .password(user.getPassword())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .address(user.getAddress())
-                .city(user.getCity())
-                .zipCode(user.getZipCode())
-                .country(user.getCountry())
-                .role(user.getRole())
-                .build();
-    }
 }

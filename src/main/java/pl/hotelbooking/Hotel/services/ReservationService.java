@@ -1,40 +1,35 @@
 package pl.hotelbooking.Hotel.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.hotelbooking.Hotel.domain.BookingStatus;
-import pl.hotelbooking.Hotel.domain.Reservation;
-import pl.hotelbooking.Hotel.domain.Room;
 import pl.hotelbooking.Hotel.domain.dto.ReservationDTO;
-import pl.hotelbooking.Hotel.domain.dto.RoomDTO;
-import pl.hotelbooking.Hotel.domain.dto.UserDTO;
+import pl.hotelbooking.Hotel.exceptions.ReservationServiceException;
 import pl.hotelbooking.Hotel.repository.ReservationRepository;
-import pl.hotelbooking.Hotel.repository.RoomRepository;
+import pl.hotelbooking.Hotel.services.mapper.EntityDtoMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final RoomRepository roomRepository;
-
-    private final RoomService roomService;
-
-    public ReservationService(ReservationRepository reservationRepository, RoomRepository roomRepository, RoomService roomService) {
-        this.reservationRepository = reservationRepository;
-        this.roomRepository = roomRepository;
-        this.roomService = roomService;
-    }
+    private final EntityDtoMapper entityDtoMapper;
 
     @Transactional
-    public void saveNewReservation(ReservationDTO reservation) {
-        reservationRepository.save(reservation.toReservation());
+    public ReservationDTO saveNewReservation(ReservationDTO reservationDTO) throws ReservationServiceException {
+        if (Objects.isNull(reservationDTO)) throw new ReservationServiceException("Given reservation object is null");
+
+        reservationRepository.save(entityDtoMapper.toReservation(reservationDTO));
+        return reservationDTO;
     }
 
     // wysłanie informacji na front o kończących się rezerwacjach, endingReservations
@@ -50,55 +45,40 @@ public class ReservationService {
         List<ReservationDTO> endingReservations = reservationRepository
                 .findAllByEndOfBookingEquals(LocalDate.now())
                 .stream()
-                .map(ReservationDTO::toReservationDTO)
+                .map(entityDtoMapper::toReservationDTO)
                 .collect(Collectors.toList());
 
         return endingReservations.stream()
                 .collect(Collectors.groupingBy(reservationDTO -> reservationDTO.getBookingStatusDTO().getReservationPaid()));
     }
 
-    // DO SPRAWDZENIA MODYFIKOWANE
-    public List<ReservationDTO> searchForUnpaidReservations() {
-        return reservationRepository.findAllByStartOfBookingIsBeforeAndEndOfBookingIsAfter(LocalDate.now(), LocalDate.now()).stream()
-                .filter(reservations -> !reservations.getBookingStatus().getReservationPaid())
-                .map(ReservationDTO::toReservationDTO)
-                .collect(Collectors.toList());
-    }
-
-    public void removeCompletedReservation() {
-        reservationRepository.removeAllByEndOfBookingAfter(LocalDate.now());
-    }
-
-    // tworzenie nowego usera, jesli jeszcze nie ma go w bazie, ogarka w controllerze
-    @Transactional
-    public void addReservation(Long roomId, LocalDate from, LocalDate to, UserDTO userDTO) {
-        List<RoomDTO> roomSought = roomService.getAllRooms().stream()
-                .filter(room -> roomService.isRoomAvailableInGivenPeriod(roomId, from, to))
-                .collect(Collectors.toList())
+    public List<ReservationDTO> findAllUnpaidReservationToDate(LocalDate end) {
+        return reservationRepository
+                .findAllByEndOfBookingIsBeforeAndBookingStatus_ReservationPaid(end, false)
                 .stream()
-                .takeWhile(room -> room.getId().equals(roomId))
+                .map(entityDtoMapper::toReservationDTO)
                 .collect(Collectors.toList());
+    }
 
-        Room room = roomRepository.findById(roomId).orElseThrow();
+    public List<ReservationDTO> searchForUnpaidReservationsBetweenDates(LocalDate start, LocalDate end) {
+        return reservationRepository
+                .findAllByStartOfBookingIsAfterAndEndOfBookingIsBeforeAndBookingStatus_ReservationPaid(start, end, false)
+                .stream()
+                .map(entityDtoMapper::toReservationDTO)
+                .collect(Collectors.toList());
+    }
 
-        if (!roomSought.get(0).getId().equals(roomId)) {
-            // wyjebać wyjątek, że pokój nie jest dostępny?
-        }
-
-        Reservation reservation = Reservation.builder()
-                .user(userDTO.toUser())
-                .room(room)
-                .startOfBooking(from)
-                .endOfBooking(to)
-                .bookingStatus(BookingStatus.builder().room(room).reservationPaid(false)
-                        .totalAmountForReservation(calculatePriceForReservation(from, to, room.getPriceForNight())).build())
-                .build();
-
-        reservationRepository.save(reservation);
+    @Transactional
+    public Set<ReservationDTO> removeCompletedReservation() {
+        return reservationRepository
+                .removeAllByEndOfBookingBeforeAndBookingStatus_ReservationPaid(LocalDate.now(), true)
+                .stream()
+                .map(entityDtoMapper::toReservationDTO)
+                .collect(Collectors.toSet());
     }
 
     public List<ReservationDTO> getAllReservations() {
-        return reservationRepository.findAll().stream().map(ReservationDTO::toReservationDTO).collect(Collectors.toList());
+        return reservationRepository.findAll().stream().map(entityDtoMapper::toReservationDTO).collect(Collectors.toList());
     }
 
     // użyc w kontrolerze przy tworzeniu rezerwacji !!!

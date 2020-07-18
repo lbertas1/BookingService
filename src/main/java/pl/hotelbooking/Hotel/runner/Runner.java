@@ -1,10 +1,11 @@
 package pl.hotelbooking.Hotel.runner;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import pl.hotelbooking.Hotel.domain.Room;
-import pl.hotelbooking.Hotel.domain.User;
+import pl.hotelbooking.Hotel.domain.dto.BookingStatusDTO;
+import pl.hotelbooking.Hotel.domain.dto.ReservationDTO;
 import pl.hotelbooking.Hotel.domain.dto.RoomDTO;
 import pl.hotelbooking.Hotel.domain.dto.UserDTO;
 import pl.hotelbooking.Hotel.repository.RoomRepository;
@@ -12,88 +13,138 @@ import pl.hotelbooking.Hotel.services.BookingStatusService;
 import pl.hotelbooking.Hotel.services.ReservationService;
 import pl.hotelbooking.Hotel.services.RoomService;
 import pl.hotelbooking.Hotel.services.UserService;
+import pl.hotelbooking.Hotel.services.mapper.EntityDtoMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
 
 @Component
+@RequiredArgsConstructor
 public class Runner implements CommandLineRunner {
 
-    // pytania do Andrzeja. W klasach dto powinno być powiązanie do innych klas dto czy do oryginałów? w sensie np w bookingStatus mam
-    // reservation to powinno być do reservationDto czy do oryginału?
+    // czy w każdej metodzie muszę rzucać wyjątkiem??? w serwisie w sensie.
 
-    // sposób na przechodzenie do klasDTO, może być metoda static, czy tworzyć za każdym razem instancję klasyDTO, żeby się od niej odwołać?
-
-    // jeśli w kończących się dziś rezerwacjach są nieopłacone to jakiś komunikat, czy błąd? metoda w reservationService, podejście do wyjątków
-
-    // jak zmienić dto z powrotem na oryginał? żeby zapisać zmieniony obiekt w bazie danych, rezervationService, calculatePriceForReservation metoda
-
-    // zapytać Andrzeja o wyjątki
+    // I JEDEN WGL JEST DO PRZETESTOWANIA CZY DZIAŁA, do poprawienia reservationController
 
     private final BookingStatusService bookingStatusService;
     private final ReservationService reservationService;
     private final RoomService roomService;
     private final UserService userService;
     private final RoomRepository roomRepository;
-
-    public Runner(BookingStatusService bookingStatusService, ReservationService reservationService, RoomService roomService, UserService userService, RoomRepository roomRepository) {
-        this.bookingStatusService = bookingStatusService;
-        this.reservationService = reservationService;
-        this.roomService = roomService;
-        this.userService = userService;
-        this.roomRepository = roomRepository;
-    }
+    private final EntityDtoMapper entityDtoMapper;
 
     @Override
     public void run(String... args) throws Exception {
 
-        User user = User.builder()
+        UserDTO user1 = UserDTO.builder()
                 .id(1L)
                 .name("Wiesiek")
                 .surname("Brzoza")
                 .age(57)
                 .build();
 
+        UserDTO user2 = UserDTO.builder()
+                .id(2L)
+                .name("Kazik")
+                .surname("Bogdanka")
+                .age(57)
+                .build();
+
+        UserDTO user3 = UserDTO.builder()
+                .id(3L)
+                .name("Hela")
+                .surname("Września")
+                .age(37)
+                .build();
+
         // potworzyć te nowe obiekty i sprawdzić czy działa
 
-        Room room1 = Room.builder()
+        RoomDTO room1 = RoomDTO.builder()
                 .roomNumber(1)
                 .roomCapacity(500)
                 .priceForNight(new BigDecimal("200"))
-                .bookingStatuses(new LinkedHashSet<>())
                 .build();
 
-        Room room2 = Room.builder()
+        RoomDTO room2 = RoomDTO.builder()
                 .roomNumber(2)
                 .roomCapacity(2)
                 .priceForNight(new BigDecimal("200"))
-                .bookingStatuses(new LinkedHashSet<>())
                 .build();
 
-        Room room3 = Room.builder()
+        RoomDTO room3 = RoomDTO.builder()
                 .roomNumber(3)
                 .roomCapacity(2)
                 .priceForNight(new BigDecimal("200"))
-                .bookingStatuses(new LinkedHashSet<>())
                 .build();
 
-        Room room4 = Room.builder()
+        RoomDTO room4 = RoomDTO.builder()
                 .roomNumber(4)
                 .roomCapacity(2)
                 .priceForNight(new BigDecimal("200"))
-                .bookingStatuses(new LinkedHashSet<>())
                 .build();
 
-        roomService.addRoom(RoomDTO.toRoomDTO(room1));
-        roomService.addRoom(RoomDTO.toRoomDTO(room2));
-        roomService.addRoom(RoomDTO.toRoomDTO(room3));
-        roomService.addRoom(RoomDTO.toRoomDTO(room4));
+        userService.saveNewUser(user1);
+        userService.saveNewUser(user2);
 
-        RoomDTO roomDTO = RoomDTO.toRoomDTO(roomRepository.findAllByRoomCapacity(500).stream().reduce((room, room21) -> room).get());
+        roomService.saveRoom(room1);
+        roomService.saveRoom(room2);
+        roomService.saveRoom(room3);
+//        roomService.addRoom(RoomDTO.toRoomDTO(room4));
+//
 
-        reservationService.addReservation(roomDTO.getId(), LocalDate.now().minusDays(2), LocalDate.now().plusDays(5), UserDTO.toUserDto(user));
-        //reservationService.addReservation(roomDTO.getId(), LocalDate.now().minusDays(10), LocalDate.now(), UserDTO.toUserDto(user));
+        BookingStatusDTO bookingStatusDTO1 = BookingStatusDTO.builder()
+                .id(1L)
+                .room(room1)
+                .reservationPaid(false)
+                .totalAmountForReservation(new BigDecimal("5000"))
+                .build();
+
+        BookingStatusDTO bookingStatusDTO2 = BookingStatusDTO.builder()
+                .id(2L)
+                .room(room2)
+                .reservationPaid(false)
+                .totalAmountForReservation(new BigDecimal("15000"))
+                .build();
+
+        BookingStatusDTO bookingStatusDTO3 = BookingStatusDTO.builder()
+                .id(3L)
+                .room(room3)
+                .reservationPaid(false)
+                .totalAmountForReservation(new BigDecimal("15000"))
+                .build();
+
+        ReservationDTO reservationDTO1 = ReservationDTO.builder()
+                .id(1L)
+                .room(room1)
+                .user(user1)
+                .bookingStatusDTO(bookingStatusDTO1)
+                .startOfBooking(LocalDate.now().minusDays(10))
+                .endOfBooking(LocalDate.now())
+                .build();
+
+        ReservationDTO reservationDTO2 = ReservationDTO.builder()
+                .id(2L)
+                .room(room2)
+                .user(user2)
+                .bookingStatusDTO(bookingStatusDTO2)
+                .startOfBooking(LocalDate.now().minusDays(10))
+                .endOfBooking(LocalDate.now())
+                .build();
+
+        ReservationDTO reservationDTO3 = ReservationDTO.builder()
+                .id(3L)
+                .room(room3)
+                .user(user3)
+                .bookingStatusDTO(bookingStatusDTO3)
+                .startOfBooking(LocalDate.now().minusDays(10))
+                .endOfBooking(LocalDate.now().minusDays(2))
+                .build();
+
+        reservationService.saveNewReservation(reservationDTO1);
+        reservationService.saveNewReservation(reservationDTO2);
+        reservationService.saveNewReservation(reservationDTO3);
+
+
 
 //        System.out.println("reservationService.getAllReservations() = " + reservationService.getAllReservations());
 //
