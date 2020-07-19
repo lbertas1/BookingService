@@ -28,8 +28,8 @@ public class BookingStatusController {
     }
 
     // nie działa, podobnie jak put. czemu?
-    @PatchMapping("/changePaymentStatus/{bookingStatusId}")
-    ResponseEntity<BookingStatusDTO> changePaymentStatus(@PathVariable Long bookingStatusId, boolean paymentStatus) throws BookingStatusServiceException {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(bookingStatusService.changePaymentStatus(bookingStatusId, paymentStatus));
+    @PatchMapping("/changePaymentStatus")
+    ResponseEntity<BookingStatusDTO> changePaymentStatus(@RequestBody BookingStatusDTO bookingStatusDTO) throws BookingStatusServiceException {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(bookingStatusService.changePaymentStatus(bookingStatusDTO));
     }
 }

@@ -23,7 +23,7 @@ public class BookingStatusService {
         return entityDtoMapper.toBookingStatusDTO(
                 bookingStatusRepository
                         .findById(id)
-                        .orElseThrow(() -> new BookingStatusServiceException("Booking status not found")));
+                        .orElseThrow(() -> new BookingStatusServiceException("Booking status not found with id: " + id)));
     }
 
     public List<BookingStatusDTO> getAllBookingStatuses() {
@@ -31,14 +31,15 @@ public class BookingStatusService {
     }
 
     @Transactional
-    public BookingStatusDTO changePaymentStatus(Long id, boolean paymentStatus) throws BookingStatusServiceException {
+    public BookingStatusDTO changePaymentStatus(BookingStatusDTO bookingStatusDTO) throws BookingStatusServiceException {
         // sprawdzenie uprawnien, sprawdzić czy to wystarczy, czy trzeba jeszcze zapisać
         BookingStatus bookingStatus = bookingStatusRepository
-                .findById(id)
-                .orElseThrow(() -> new BookingStatusServiceException("Booking status not found"));
+                .findById(bookingStatusDTO.getId())
+                .orElseThrow(() -> new BookingStatusServiceException("Booking status not found with id: " + bookingStatusDTO.getId()));
 
-        bookingStatus.setReservationPaid(paymentStatus);
-        bookingStatusRepository.save(bookingStatus);
+        bookingStatus.setReservationPaid(bookingStatusDTO.getReservationPaid());
+        bookingStatus = bookingStatusRepository.save(bookingStatus);
+
         return entityDtoMapper.toBookingStatusDTO(bookingStatus);
     }
 }

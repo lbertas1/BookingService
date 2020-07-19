@@ -68,6 +68,4 @@ public class RoomController {
     ResponseEntity<List<RoomDTO>> getAllRoomsForGivenCapacity(@PathVariable int capacity) {
         return ResponseEntity.ok(roomService.getAllRoomsForGivenCapacity(capacity));
     }
-
-    // WSZYSTKO DZIAŁA W POSTMANIE, TYLKO TYCH DWÓCH NIE UMIEM PRZETESTOWAĆ !!!
 }

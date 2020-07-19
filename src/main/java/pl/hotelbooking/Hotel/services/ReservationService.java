@@ -81,9 +81,7 @@ public class ReservationService {
         return reservationRepository.findAll().stream().map(entityDtoMapper::toReservationDTO).collect(Collectors.toList());
     }
 
-    // użyc w kontrolerze przy tworzeniu rezerwacji !!!
     public BigDecimal calculatePriceForReservation(LocalDate startOfBooking, LocalDate endOfBooking, BigDecimal priceForNight) {
-        // sprawdzić tutaj czy to dobrze ogarnie dni
         Long days = ChronoUnit.DAYS.between(startOfBooking, endOfBooking);
         BigDecimal quantityOfDays = new BigDecimal(String.valueOf(days));
         return quantityOfDays.multiply(priceForNight);
