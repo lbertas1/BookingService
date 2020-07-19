@@ -86,4 +86,6 @@ public class ReservationService {
         BigDecimal quantityOfDays = new BigDecimal(String.valueOf(days));
         return quantityOfDays.multiply(priceForNight);
     }
+
+    ///// lalalal
 }
