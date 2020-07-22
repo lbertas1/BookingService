@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import pl.hotelbooking.Hotel.domain.BaseModel;
-import pl.hotelbooking.Hotel.domain.Role;
+import pl.hotelbooking.Hotel.domain.enums.Role;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -24,4 +26,6 @@ public class UserDTO extends BaseModel {
     private String country;
 
     private Role role;
+
+    private Set<String> authorities;
 }

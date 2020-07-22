@@ -27,7 +27,6 @@ public class BookingStatusController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(bookingStatusService.getAllBookingStatuses());
     }
 
-    // nie działa, podobnie jak put. czemu?
     @PatchMapping("/changePaymentStatus")
     ResponseEntity<BookingStatusDTO> changePaymentStatus(@RequestBody BookingStatusDTO bookingStatusDTO) throws BookingStatusServiceException {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(bookingStatusService.changePaymentStatus(bookingStatusDTO));

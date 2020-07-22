@@ -12,6 +12,9 @@ spring:
     driver-class-name: org.h2.Driver
     url: 'jdbc:h2:file:/home/lbertas1/Dokumenty/JavaProject/Hotel/dataBase'
 
+#  realm to nazwa tego projektu na stronie keycloak, a auth-server-url to adres pod ktorym jest zainstalowany keycloak,
+# w resource definiujemy siebie jako clienta, czyli tam dajemy swoje id ze stronki keycloak
+
 #---
 #spring:
 #  profiles: prod

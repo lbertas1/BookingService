@@ -3,11 +3,11 @@ package pl.hotelbooking.Hotel.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import pl.hotelbooking.Hotel.domain.enums.Role;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Data
 @Entity
@@ -18,7 +18,7 @@ public class User extends BaseModel {
     private String name;
     private String surname;
     private Integer age;
-    private String login;
+    private String username;
     private String password;
     private String email;
     private String phone;
@@ -27,7 +27,6 @@ public class User extends BaseModel {
     private String zipCode;
     private String country;
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id")
+    @Enumerated(EnumType.STRING)
     private Role role;
 }

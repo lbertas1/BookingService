@@ -1,6 +1,9 @@
 package pl.hotelbooking.Hotel.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.hotelbooking.Hotel.domain.dto.UserDTO;
@@ -12,7 +15,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final EntityDtoMapper entityDtoMapper;
@@ -40,5 +43,10 @@ public class UserService {
 
     public UserDTO getUser(Long userId) throws UserServiceException {
         return entityDtoMapper.toUserDTO(userRepository.findById(userId).orElseThrow(() -> new UserServiceException("User not found")));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return null;
     }
 }
