@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 import pl.hotelbooking.Hotel.domain.BaseModel;
 import pl.hotelbooking.Hotel.domain.enums.Role;
 
-import java.util.Set;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -15,8 +15,8 @@ public class UserDTO extends BaseModel {
 
     private String name;
     private String surname;
-    private Integer age;
-    private String login;
+    private LocalDate birthDay;
+    private String username;
     private String password;
     private String email;
     private String phone;
@@ -24,8 +24,7 @@ public class UserDTO extends BaseModel {
     private String city;
     private String zipCode;
     private String country;
-
+    private Boolean isNotLocked;
     private Role role;
 
-    private Set<String> authorities;
 }

@@ -1,27 +1,28 @@
-spring:
-  profiles: dev
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-  h2:
-    console:
-      enabled: true
-      path: '/console'
-  datasource:
-    platform: h2
-    driver-class-name: org.h2.Driver
-    url: 'jdbc:h2:file:/home/lbertas1/Dokumenty/JavaProject/Hotel/dataBase'
+#spring:
+#  profiles: dev
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#  h2:
+#    console:
+#      enabled: true
+#      path: '/console'
+#  datasource:
+#    platform: h2
+#    driver-class-name: org.h2.Driver
+#    url: 'jdbc:h2:file:/home/lbertas1/Dokumenty/JavaProject/Hotel/dataBase'
 
 #  realm to nazwa tego projektu na stronie keycloak, a auth-server-url to adres pod ktorym jest zainstalowany keycloak,
 # w resource definiujemy siebie jako clienta, czyli tam dajemy swoje id ze stronki keycloak
 
+
 #---
-#spring:
-#  profiles: prod
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#  datasource:
-#    url: 'jdbc:Mysql://localhost:3306/PhysicalActivityLog?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false'
-#    username: 'root'
-#    password: 'your_new_password'
+spring:
+  profiles: prod
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: 'jdbc:Mysql://localhost:3306/BookingService?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false'
+    username: 'root'
+    password: 'your_new_password'

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
@@ -13,11 +14,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
 @Entity
-public class Room extends BaseModel {
+public class Room extends BaseModel implements Serializable {
 
     private Integer roomNumber;
     private Integer roomCapacity;
-    private String describe;
+    private String description;
     private BigDecimal priceForNight;
 
 //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

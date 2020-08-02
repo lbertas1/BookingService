@@ -15,7 +15,7 @@ public class RoomDTO extends BaseModel {
     private Long id;
     private Integer roomNumber;
     private Integer roomCapacity;
-    private String describe;
+    private String description;
     private BigDecimal priceForNight;
 
 //    private Set<BookingStatusDTO> bookingStatuses;

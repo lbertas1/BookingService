@@ -8,6 +8,7 @@ import pl.hotelbooking.Hotel.domain.enums.Role;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -17,7 +18,7 @@ public class User extends BaseModel {
 
     private String name;
     private String surname;
-    private Integer age;
+    private LocalDate birthDate;
     private String username;
     private String password;
     private String email;
@@ -26,7 +27,7 @@ public class User extends BaseModel {
     private String city;
     private String zipCode;
     private String country;
-
+    private Boolean isNotLocked;
     @Enumerated(EnumType.STRING)
     private Role role;
 }

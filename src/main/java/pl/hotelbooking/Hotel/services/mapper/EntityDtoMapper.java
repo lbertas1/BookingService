@@ -18,8 +18,8 @@ public class EntityDtoMapper {
                 .id(userDTO.getId())
                 .name(userDTO.getName())
                 .surname(userDTO.getSurname())
-                .age(userDTO.getAge())
-                .username(userDTO.getLogin())
+                .birthDate(userDTO.getBirthDay())
+                .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
                 .country(userDTO.getCountry())
                 .zipCode(userDTO.getZipCode())
@@ -27,6 +27,7 @@ public class EntityDtoMapper {
                 .address(userDTO.getAddress())
                 .phone(userDTO.getPhone())
                 .email(userDTO.getEmail())
+                .isNotLocked(userDTO.getIsNotLocked())
                 .role(userDTO.getRole())
                 .build();
     }
@@ -36,8 +37,8 @@ public class EntityDtoMapper {
                 .id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
-                .age(user.getAge())
-                .login(user.getUsername())
+                .birthDay(user.getBirthDate())
+                .username(user.getUsername())
                 .password(user.getPassword())
                 .country(user.getCountry())
                 .zipCode(user.getZipCode())
@@ -45,6 +46,7 @@ public class EntityDtoMapper {
                 .address(user.getAddress())
                 .phone(user.getPhone())
                 .email(user.getEmail())
+                .isNotLocked(user.getIsNotLocked())
                 .role(user.getRole())
                 .build();
     }
@@ -53,7 +55,7 @@ public class EntityDtoMapper {
         return Room.builder()
                 .id(roomDTO.getId())
                 .priceForNight(roomDTO.getPriceForNight())
-                .describe(roomDTO.getDescribe())
+                .description(roomDTO.getDescription())
                 .roomCapacity(roomDTO.getRoomCapacity())
                 .roomNumber(roomDTO.getRoomNumber())
                 .build();
@@ -64,7 +66,7 @@ public class EntityDtoMapper {
         return RoomDTO.builder()
                 .id(room.getId())
                 .priceForNight(room.getPriceForNight())
-                .describe(room.getDescribe())
+                .description(room.getDescription())
                 .roomCapacity(room.getRoomCapacity())
                 .roomNumber(room.getRoomNumber())
                 .build();

@@ -15,7 +15,17 @@ import pl.hotelbooking.Hotel.services.mapper.EntityDtoMapper;
 @RequiredArgsConstructor
 public class Runner implements CommandLineRunner {
 
+    // WYLOGOWYWANIE... W SECURITYCONFIGURATION, CZY RĘCZNIE ZROBIĆ PUNKT I TAM WYWALIĆ TOKENA Z HEADERSÓW??????
+
+    // OGARNĄC CACHE-A I ULEPSZYĆ, ŻEBY WYRZUCAŁ POŻĄDANĄ INFORMACJĘ, TESTOWANY DZIAŁA
+
     // OZNACZYĆ KONKRETNE METODY ADNOTACJAMI DOSTĘPU!!!
+
+    // USER SERVICE TESTOWANY, OPRÓCZ WYLOGOWYWANIA WSZYSTKO DZIAŁAŁO
+
+    // DODAĆ WYSYŁANIE EMAILA Z ODPOWIEDNIĄ ZAWARTOŚCIĄ
+
+    // VALIDACJA NA FRONCIE, DOROBIĆ ADNOTACJE ODNOŚNIE OGRANICZEŃ W ROLACH
 
     private final BookingStatusService bookingStatusService;
     private final ReservationService reservationService;
@@ -29,11 +39,13 @@ public class Runner implements CommandLineRunner {
 
 //        UserDTO user1 = UserDTO.builder()
 //                .id(1L)
+//                .username("lbertas1")
+//                .password("password")
 //                .name("Wiesiek")
 //                .surname("Brzoza")
-//                .age(57)
+//                .birthDay(LocalDate.now().minusYears(20))
 //                .build();
-//
+
 //        UserDTO user2 = UserDTO.builder()
 //                .id(2L)
 //                .name("Kazik")
