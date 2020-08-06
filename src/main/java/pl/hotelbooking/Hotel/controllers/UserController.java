@@ -55,6 +55,7 @@ public class UserController {
         return new ResponseEntity<>(userDTOAfterSave, OK);
     }
 
+    // zmienić na username zamiast id
     @GetMapping("/getUser/{userId}")
     ResponseEntity<UserDTO> getUser(@PathVariable Long userId) throws UserServiceException, EmailServiceException {
         // TYMCZASOWO
@@ -73,17 +74,10 @@ public class UserController {
         return ResponseEntity.status(ACCEPTED).body(userService.updateUser(userDTO));
     }
 
+    // tak samo zmienić na username
     @DeleteMapping("/removeUser/{userId}")
     ResponseEntity<Long> removeUser(@PathVariable Long userId) {
         return ResponseEntity.status(ACCEPTED).body(userService.removeUser(userId));
-    }
-
-    // czy to wystarczy do wylogowania???
-    // CHYBA NIE DZIAŁA
-    // USUNAC TOKEN???
-    @PostMapping("/logout")
-    ResponseEntity<HttpStatus> logout() {
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/changePassword")

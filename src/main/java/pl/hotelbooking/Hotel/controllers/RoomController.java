@@ -18,7 +18,7 @@ public class RoomController {
 
     private final RoomService roomService;
 
-    @GetMapping
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<List<RoomDTO>> getAllRooms() {
         return ResponseEntity.ok(roomService.getAllRooms());
@@ -54,17 +54,17 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getAllEmptyRooms());
     }
 
-    @GetMapping("/isAvailable")
+    @PostMapping("/isAvailable")
     ResponseEntity<Boolean> isRoomAvailableInGivenPeriod(@RequestBody IdPeriodDTO idPeriodDTO) {
         return ResponseEntity.ok(roomService.isRoomAvailableInGivenPeriod(idPeriodDTO.getId(), idPeriodDTO.getFrom(), idPeriodDTO.getTo()));
     }
 
-    @GetMapping("/emptyRoomsInPeriod")
+    @PostMapping("/emptyRoomsInPeriod")
     ResponseEntity<List<RoomDTO>> getAllEmptyRoomsInGivenPeriod(@RequestBody IdPeriodDTO idPeriodDTO) {
         return ResponseEntity.ok(roomService.getAllEmptyRoomsInGivenPeriod(idPeriodDTO.getFrom(), idPeriodDTO.getTo()));
     }
 
-    @GetMapping ("/capacity/{capacity}")
+    @PostMapping ("/capacity/{capacity}")
     ResponseEntity<List<RoomDTO>> getAllRoomsForGivenCapacity(@PathVariable int capacity) {
         return ResponseEntity.ok(roomService.getAllRoomsForGivenCapacity(capacity));
     }
