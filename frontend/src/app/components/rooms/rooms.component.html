@@ -1,0 +1,16 @@
+<p>rooms works!</p>
+
+<div class="rooms-main-container">
+  <div class="room" *ngFor="let room of rooms | async">
+    <a [routerLink]="['/room', room.roomNumber]">More >></a>
+    <div class="room-picture">
+      <img src="https://static.fajnyzwierzak.pl/media/uploads/media_image/auto/entry-content/24/mobile/szary-kot-brytyjski.jpg" alt="cat">
+    </div>
+    <div class="room-number">
+      <h4>Room number: {{ room.roomNumber }}</h4>
+    </div>
+    <div class="room-description">
+      <p>Description: {{ room.description }}</p>
+    </div>
+  </div>
+</div>

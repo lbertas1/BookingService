@@ -31,6 +31,7 @@ public class UserService implements UserDetailsService {
         validateUsername(userDTO.getUsername());
         validateEmail(userDTO.getEmail());
         userDTO.setPassword(encodePassword(userDTO.getPassword()));
+        userDTO.setIsNotLocked(true);
 
         userRepository.save(entityDtoMapper.toUser(userDTO));
         return userDTO;
@@ -124,7 +125,7 @@ public class UserService implements UserDetailsService {
     }
 
     private void validateEmail(String email) throws UserServiceException {
-        if (userRepository.findByUsername(email).isPresent())
+        if (userRepository.findByEmail(email).isPresent())
             throw new UserServiceException("Given email already exists");
     }
 

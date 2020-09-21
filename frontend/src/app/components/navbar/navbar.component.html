@@ -1,0 +1,32 @@
+<nav>
+  <div class="nav-wrapper blue-grey darken-2">
+    <a href="#" class="brand-logo center">Booking Service</a>
+    <ul id="nav-mobile" class="left hide-on-med-and-down">
+      <li><a [routerLink]="'/home'">Home</a></li>
+      <li><a [routerLink]="'/rooms'">Rooms</a></li>
+      <li><a [routerLink]="'/register'">Register</a></li>
+    </ul>
+
+    <ul class="right hide-on-med-and-down">
+      <li>
+        <div *ngIf="!user">
+          <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm.value)">
+            <label for="">
+              <input type="text" name="username" placeholder="Username" ngModel
+                     #usernameInput="ngModel" required>
+            </label>
+            <label for="" class="input-password">
+              <input type="password"  name="password" placeholder="Password"
+                     ngModel #passwordInput="ngModel" required>
+            </label>
+            <input type="submit" class="Sign-In" value="Sign In">
+          </form>
+        </div>
+        <div *ngIf="user">
+          <p>{{ user.username }}</p>
+          <button class="logout-button" (click)="logout()">logout</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>

@@ -34,6 +34,7 @@ public class UserController {
         UserDTO user = userService.findUserByUsername(usernamePasswordDTO.getUsername());
         MyUserPrincipal myUserPrincipal = new MyUserPrincipal(user);
         HttpHeaders jwtHeaders = getJwtHeader(myUserPrincipal);
+        System.out.println(usernamePasswordDTO.getUsername() + " USERNAME");
         return new ResponseEntity<>(user, jwtHeaders, OK);
     }
 
@@ -56,7 +57,7 @@ public class UserController {
     }
 
     // zmienić na username zamiast id
-    @GetMapping("/getUser/{userId}")
+    @GetMapping("/profile/{userId}")
     ResponseEntity<UserDTO> getUser(@PathVariable Long userId) throws UserServiceException, EmailServiceException {
         // TYMCZASOWO
 //        EmailService.send("lbertas1@wp.pl", "emailFromHotelProject", "<h1> kupa gówna </h1>");

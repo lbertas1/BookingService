@@ -1,0 +1,24 @@
+//.rooms-main-container {
+//  display: grid;
+//  grid-template-columns: repeat(12, 1fr);
+//  grid-template-rows: repeat(12, 1fr);
+//  grid-gap: 20px;
+//  background: yellowgreen;
+//}
+//.room {
+//  grid-column: 3 / 11;
+//  grid-row: 1 / -1;
+//}
+
+.rooms-main-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.room {
+  margin: 20px;
+  background: yellowgreen;
+  width: 1000px;
+}
+

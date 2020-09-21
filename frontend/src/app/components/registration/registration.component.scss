@@ -1,0 +1,25 @@
+.main-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.register-form-container {
+  margin-top: 50px;
+  width: 600px;
+}
+
+.register-form-input {
+  display: block;
+  font-size: 20px;
+}
+
+.register-button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.register-button {
+  margin-top: 20px;
+  font-size: 25px;
+}
